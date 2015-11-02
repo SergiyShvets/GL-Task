@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <cstring>
 #include <cstdlib>
 
 using namespace std;
@@ -22,8 +22,7 @@ void IPAddress::Menu() {
 
 	cout << "PING APPLICATION" << endl;
 	cout << "\nPress [1] to start ping from file list\n"
-			<< "Press [2] to start ping manually\n\n"
-			<< "Enter your choice:\n";
+			<< "Press [2] to start ping manually\n\n" << "Enter your choice:\n";
 
 	cin >> option;
 	cout << endl;
@@ -37,6 +36,8 @@ void IPAddress::Menu() {
 	default:
 		cout << "Wrong option, please try again: " << endl << endl;
 	}
+
+	PingResult();
 
 	cout << "Do you want to ping again?" << endl;
 	cout << "Press [Y]es or [N]o" << endl;
@@ -63,32 +64,68 @@ void IPAddress::PingIPAddress() {
 
 				getline(ipList, ipAddress);
 				cout << ipAddress << endl;
-				system(("ping " + ipAddress).c_str());
-
+				system(("ping -n 5 " + ipAddress).c_str());
+				system(("ping -n 5 " + ipAddress + ">> PingResult.txt" ).c_str());
 				cout << endl << endl;
 
 			}
 		}
 
 		ipList.close();
+
 	} else
 		cout << "Unable to open file";
-
-	cout << "The address with the lowest ping is:\nTODO" << endl << endl;
 
 }
 
 void IPAddress::PingIPAddressManually() {
 
-
 	cout << "Enter IP address or website:" << endl;
 
 	cin >> ipAddressManual;
 
-	system(("ping " + ipAddressManual).c_str());
-
+	system(("ping -n 5 " + ipAddressManual).c_str());
+	system(("ping -n 5 " + ipAddressManual + "> PingResult.txt").c_str());
 	cout << endl;
 
+}
+
+void IPAddress::PingResult() {
+
+	cout << "IP Address with lowest ping is: " << endl << endl;
+
+	ifstream pingResult("PingResult.txt");
+
+	const char* delimiter = "m"; // TODO console is Russian, icons instead of words
+	const int maxChars = 512;
+	const int maxTokens = 20;
+	int zero = 0;
+	if (!pingResult.good()) {
+
+		cout << "Open file error" << endl;
+	}
+
+	while (!pingResult.eof()) {
+
+		char buff[maxChars];
+		pingResult.getline(buff, maxChars);
+
+		const char* token[maxTokens] = { };
+
+		token[zero] = strtok(buff, delimiter);
+
+		if (token[zero]) {
+			for (int i = 0; i < maxTokens; i++) {
+
+				token[i] = strtok(0, delimiter);
+				if (!token[i])
+					break;
+
+				cout << token[i] << endl;
+			}
+		}
+	}
+	cout << endl << endl;
 }
 void IPAddress::IPWebsites(int &i) {
 

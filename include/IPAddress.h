@@ -4,13 +4,14 @@
 class IPAddress {
 public:
 	IPAddress();
-
 	void Menu();
+	virtual ~IPAddress();
+protected:
 	void PingIPAddress();
 	void PingIPAddressManually();
 	void IPWebsites(int &i);
+	void PingResult();
 
-	virtual ~IPAddress();
 };
 
 #endif
